@@ -61,4 +61,11 @@ public class UserInfo {
     public void setUserId() {
         this.userId = uidGener.incrementAndGet();
     }
+
+	@Override
+	public String toString() {
+		return "UserInfo [isAuth=" + isAuth + ", time=" + time + ", userId=" + userId + ", nick=" + nick + ", addr="
+				+ addr + ", channel=" + channel + "]";
+	}
+    
 }

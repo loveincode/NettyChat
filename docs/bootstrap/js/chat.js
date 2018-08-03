@@ -4,8 +4,8 @@ var userNick = null;
 var userCount = 0;
 $(function () {
     $("#menuModal").modal('show');
-    var height = $(window).height();
-    $('#content').css("height", height - $('#top').height() - $('#opt').height() - 40);
+    
+    
 
     $('#loginBtn').click(function(){
         userLogin();
@@ -32,7 +32,7 @@ $(function () {
 });
 
 function sendMess(mess) {
-    send(true, "{'code':10086,'mess':'"+mess+"'}");
+    send(true, "{'code':'MESS_CODE','mess':'"+mess+"'}");
 }
 ;
 
@@ -109,7 +109,7 @@ function send(auth, mess) {
 
 function openInvake(event) {
     var obj = {};
-    obj.code = 10000;
+    obj.code = "AUTH_CODE";
     obj.nick = $('#nick').val().trim();
     send(true, JSON.stringify(obj));
 }
@@ -131,22 +131,25 @@ function closeInvake(event) {
  */
 function sysInvake(data) {
     switch (data.extend.code) {
-        case 20001: // user count
+        case "SYS_USER_COUNT": // user count
             console.log("current user: " + data.extend.mess);
             userCount = data.extend.mess;
             $('#userCount').text(userCount);
             break;
-        case 20002: // auth
+        case "SYS_AUTH_STATE": // auth
             console.log("auth result: " + data.extend.mess);
             isAuth = data.extend.mess;
             if (isAuth) {
                 $("#menuModal").modal('hide');
                 $('#chatWin').show();
+                
                 $('#content').append('欢迎来到Netty聊天室！！');
+                var height = $(window).height();
+                $('#content').css("height", height - $('#top').height() - $('#opt').height() -20);
                 // $('#content').scrollTop($('#content')[0].scrollHeight);
             }
             break;
-        case 20003: // system message
+        case "SYS_OTHER_INFO": // system message
             console.log("system message: " + data.extend.mess);
             break;
     }
@@ -181,7 +184,7 @@ function erorInvake(data) {
  */
 function pingInvake(data) {
     //发送pong消息响应
-    send(isAuth, "{'code':10016}");
+    send(isAuth, "{'code':'PONG_CODE'}");
 }
 ;
 //查看结果

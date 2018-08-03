@@ -2,17 +2,20 @@ package com.loveincode.chat.proto;
 
 public class ChatCode {
 
-    public static final int PING_CODE = 10015;
-    public static final int PONG_CODE = 10016;
+	/*
+	 * PING_CODE 10015
+	 */
+    public static final String PING_CODE = "PING_CODE";
+    public static final String PONG_CODE = "PONG_CODE";
 
-    public static final int AUTH_CODE = 10000;
-    public static final int MESS_CODE = 10086;
+    public static final String AUTH_CODE = "AUTH_CODE";
+    public static final String MESS_CODE = "MESS_CODE";
 
     /**
      * 系统消息类型
      */
-    public static final int SYS_USER_COUNT = 20001; // 在线用户数
-    public static final int SYS_AUTH_STATE = 20002; // 认证结果
-    public static final int SYS_OTHER_INFO = 20003; // 系统消息
+    public static final String SYS_USER_COUNT = "SYS_USER_COUNT"; // 在线用户数
+    public static final String SYS_AUTH_STATE = "SYS_AUTH_STATE"; // 认证结果
+    public static final String SYS_OTHER_INFO = "SYS_OTHER_INFO"; // 系统消息
 
 }

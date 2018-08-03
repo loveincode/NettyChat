@@ -12,12 +12,12 @@ import java.util.Map;
  *   4
  */
 public class ChatProto {
-    public static final int PING_PROTO = 1 << 8 | 220; //ping消息
-    public static final int PONG_PROTO = 2 << 8 | 220; //pong消息
-    public static final int SYST_PROTO = 3 << 8 | 220; //系统消息
-    public static final int EROR_PROTO = 4 << 8 | 220; //错误消息
-    public static final int AUTH_PROTO = 5 << 8 | 220; //认证消息
-    public static final int MESS_PROTO = 6 << 8 | 220; //普通消息
+    public static final int PING_PROTO = 1 << 8 | 220; //ping消息 476
+    public static final int PONG_PROTO = 2 << 8 | 220; //pong消息 732
+    public static final int SYST_PROTO = 3 << 8 | 220; //系统消息 988
+    public static final int EROR_PROTO = 4 << 8 | 220; //错误消息 1244
+    public static final int AUTH_PROTO = 5 << 8 | 220; //认证消息 1500
+    public static final int MESS_PROTO = 6 << 8 | 220; //普通消息 1756
 
     private int version = 1;
     private int uri;
@@ -37,7 +37,7 @@ public class ChatProto {
         return buildProto(PONG_PROTO, null);
     }
 
-    public static String buildSystProto(int code, Object mess) {
+    public static String buildSystProto(String code, Object mess) {
         ChatProto chatProto = new ChatProto(SYST_PROTO, null);
         chatProto.extend.put("code", code);
         chatProto.extend.put("mess", mess);
@@ -50,7 +50,7 @@ public class ChatProto {
         return JSONObject.toJSONString(chatProto);
     }
 
-    public static String buildErorProto(int code,String mess) {
+    public static String buildErorProto(String code,String mess) {
         ChatProto chatProto = new ChatProto(EROR_PROTO, null);
         chatProto.extend.put("code", code);
         chatProto.extend.put("mess", mess);

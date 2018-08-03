@@ -23,6 +23,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
+//处理握手和认证
 public class UserAuthHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger logger = LoggerFactory.getLogger(UserAuthHandler.class);
 
@@ -31,8 +32,10 @@ public class UserAuthHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
+        	//处理http请求
             handleHttpRequest(ctx, (FullHttpRequest) msg);
         } else if (msg instanceof WebSocketFrame) {
+        	//处理socket请求
             handleWebSocket(ctx, (WebSocketFrame) msg);
         }
     }
@@ -69,6 +72,7 @@ public class UserAuthHandler extends SimpleChannelInboundHandler<Object> {
             UserInfo userInfo = new UserInfo();
             userInfo.setAddr(NettyUtil.parseChannelRemoteAddr(ctx.channel()));
             // 存储已经连接的Channel
+            logger.info("**存储已经连接的Channel");
             UserInfoManager.addChannel(ctx.channel());
         }
     }
@@ -98,8 +102,11 @@ public class UserAuthHandler extends SimpleChannelInboundHandler<Object> {
             throw new UnsupportedOperationException(frame.getClass().getName() + " frame type not supported");
         }
         String message = ((TextWebSocketFrame) frame).text();
+        UserInfo userInfo = UserInfoManager.getUserInfo(ctx.channel());
+        logger.info("**收到用户 " +userInfo.toString()+"消息**"+message);
         JSONObject json = JSONObject.parseObject(message);
-        int code = json.getInteger("code");
+        String code = json.getString("code");
+        
         Channel channel = ctx.channel();
         switch (code) {
             case ChatCode.PING_CODE:

@@ -57,9 +57,11 @@ public class NettyChatServer extends BaseServer {
 
             // 定时扫描所有的Channel，关闭失效的Channel
             executorService.scheduleAtFixedRate(new Runnable() {
+            	
+            	
                 @Override
                 public void run() {
-                    logger.info("scanNotActiveChannel --------");
+                    logger.info("定时任务 扫描不活跃的Channel  --------");
                     UserInfoManager.scanNotActiveChannel();
                 }
             }, 3, 60, TimeUnit.SECONDS);
@@ -68,6 +70,7 @@ public class NettyChatServer extends BaseServer {
             executorService.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
+                	logger.info("定时任务 广播在线人数  --------");
                     UserInfoManager.broadCastPing();
                 }
             }, 3, 50, TimeUnit.SECONDS);
