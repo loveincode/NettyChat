@@ -1,23 +1,23 @@
 package com.loveincode.chat.handler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.fastjson.JSONObject;
 import com.loveincode.chat.entity.UserInfo;
 import com.loveincode.chat.proto.ChatCode;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import lombok.extern.slf4j.Slf4j;
 
-//处理消息的发送
+/**
+ * 处理消息的发送
+ *
+ * @author huyifan
+ */
+@Slf4j
 public class MessageHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
-    private static final Logger logger = LoggerFactory.getLogger(MessageHandler.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame frame)
-            throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame frame) {
         UserInfo userInfo = UserInfoManager.getUserInfo(ctx.channel());
         if (userInfo != null && userInfo.isAuth()) {
             JSONObject json = JSONObject.parseObject(frame.text());
@@ -29,13 +29,13 @@ public class MessageHandler extends SimpleChannelInboundHandler<TextWebSocketFra
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         UserInfoManager.removeChannel(ctx.channel());
-        UserInfoManager.broadCastInfo(ChatCode.SYS_USER_COUNT,UserInfoManager.getAuthUserCount());
+        UserInfoManager.broadCastInfo(ChatCode.SYS_USER_COUNT, UserInfoManager.getAuthUserCount());
         super.channelUnregistered(ctx);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("connection error and close the channel", cause);
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        log.error("connection error and close the channel", cause);
         UserInfoManager.removeChannel(ctx.channel());
         UserInfoManager.broadCastInfo(ChatCode.SYS_USER_COUNT, UserInfoManager.getAuthUserCount());
     }

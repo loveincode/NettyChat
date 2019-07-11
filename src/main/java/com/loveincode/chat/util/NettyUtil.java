@@ -4,12 +4,16 @@ import java.net.SocketAddress;
 
 import io.netty.channel.Channel;
 
+/**
+ * @author huyifan
+ */
 public class NettyUtil {
 
     /**
      * 获取Channel的远程IP地址
-     * @param channel
-     * @return
+     *
+     * @param channel channel
+     * @return 远程IP地址
      */
     public static String parseChannelRemoteAddr(final Channel channel) {
         if (null == channel) {

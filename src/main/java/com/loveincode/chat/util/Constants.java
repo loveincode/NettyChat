@@ -1,5 +1,8 @@
 package com.loveincode.chat.util;
 
+/**
+ * @author huyifan
+ */
 public class Constants {
 
     public static String DEFAULT_HOST = "localhost";
