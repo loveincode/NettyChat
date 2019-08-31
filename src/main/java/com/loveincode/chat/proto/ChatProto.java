@@ -11,6 +11,7 @@ import java.util.Map;
  * 聊天室的协议
  * | head | body
  * 4
+ * @author huyifan
  */
 @Data
 public class ChatProto {

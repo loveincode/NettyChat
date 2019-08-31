@@ -152,7 +152,7 @@ public class UserInfoManager {
      */
     public static void sendInfo(Channel channel, String code, Object mess) {
         log.info("发送系统消息 code  : " + code + " mess: " + mess);
-        channel.writeAndFlush(new TextWebSocketFrame(ChatProto.buildSystProto(code, mess)));
+        channel.writeAndFlush(new TextWebSocketFrame(ChatProto. buildSystProto(code, mess)));
     }
 
     public static void sendPong(Channel channel) {

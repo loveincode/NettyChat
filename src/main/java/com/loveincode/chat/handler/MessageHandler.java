@@ -33,6 +33,11 @@ public class MessageHandler extends SimpleChannelInboundHandler<TextWebSocketFra
         super.channelUnregistered(ctx);
     }
 
+    /**
+     * 异常发生时
+     * @param ctx
+     * @param cause
+     */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error("connection error and close the channel", cause);

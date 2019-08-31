@@ -1,6 +1,6 @@
 package com.loveincode.chat;
 
-import com.loveincode.chat.util.Constants;
+import com.loveincode.chat.proto.Constants;
 import lombok.extern.slf4j.Slf4j;
 
 /**

@@ -3,7 +3,7 @@ package com.loveincode.chat.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.loveincode.chat.entity.UserInfo;
 import com.loveincode.chat.proto.ChatCode;
-import com.loveincode.chat.util.Constants;
+import com.loveincode.chat.proto.Constants;
 import com.loveincode.chat.util.NettyUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,6 +35,11 @@ public class UserAuthHandler extends SimpleChannelInboundHandler<Object> {
         }
     }
 
+    /**
+     * ChannelInboundHandlerAdapter  userEventTriggered
+     * @param ctx
+     * @param evt
+     */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
         if (evt instanceof IdleStateEvent) {
@@ -51,13 +56,14 @@ public class UserAuthHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest request) {
+        log.info("handleHttpRequest 收到消息:{}", request);
         if (!request.decoderResult().isSuccess() || !"websocket".equals(request.headers().get("Upgrade"))) {
             log.warn("protobuf don't support websocket");
             ctx.channel().close();
             return;
         }
         WebSocketServerHandshakerFactory handshakerFactory = new WebSocketServerHandshakerFactory(
-                Constants.WEBSOCKET_URL, null, true);
+            Constants.WEBSOCKET_URL, null, true);
         handShaker = handshakerFactory.newHandshaker(request);
         if (handShaker == null) {
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
@@ -73,9 +79,11 @@ public class UserAuthHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     private void handleWebSocket(ChannelHandlerContext ctx, WebSocketFrame frame) {
+        log.info("handleWebSocket 收到消息:{}", frame.content().retain());
         // 判断是否关闭链路命令
         if (frame instanceof CloseWebSocketFrame) {
             handShaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
+            log.info("close websocket removeChannel :{}", ctx.channel());
             UserInfoManager.removeChannel(ctx.channel());
             return;
         }

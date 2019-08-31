@@ -27,13 +27,13 @@ public class NettyChatServer extends BaseServer {
     private ScheduledExecutorService executorService;
 
     public NettyChatServer(int port) {
-        this.port = port;
+        super.port = port;
         executorService = Executors.newScheduledThreadPool(2);
     }
 
     @Override
     public void start() {
-        b.group(bossGroup, workGroup)
+        super.serverBootstrap.group(super.bossGroup, super.workGroup)
             .channel(NioServerSocketChannel.class)
             .option(ChannelOption.SO_KEEPALIVE, true)
             .option(ChannelOption.TCP_NODELAY, true)
@@ -42,15 +42,19 @@ public class NettyChatServer extends BaseServer {
             .childHandler(new ChannelInitializer<SocketChannel>() {
 
                 @Override
-                protected void initChannel(SocketChannel ch) throws Exception {
-                    ch.pipeline().addLast(defLoopGroup,
-                        //请求解码器
+                protected void initChannel(SocketChannel ch) {
+                    ch.pipeline().addLast(NettyChatServer.super.defLoopGroup,
+                        //请求解码器 针对http协议进行编解码
                         new HttpServerCodec(),
-                        //将多个消息转换成单一的消息对象
+                        //作用是将一个Http的消息组装成一个完成的HttpRequest或者HttpResponse，那么具体的是什么
+                        //取决于是请求还是响应, 该Handler必须放在HttpServerCodec后的后面       将多个消息转换成单一的消息对象
                         new HttpObjectAggregator(65536),
-                        //支持异步发送大的码流，一般用于发送文件流
+                        //支持异步发送大的码流，一般用于发送文件流 ChunkedWriteHandler分块写处理，文件过大会将内存撑爆
                         new ChunkedWriteHandler(),
-                        //检测链路是否读空闲
+                        //检测链路是否读空闲 心跳时间
+                        //readerIdleTime：为读超时时间（即测试端一定时间内未接受到被测试端消息）。
+                        //writerIdleTime：为写超时时间（即测试端一定时间内未向被测试端发送消息）。
+                        //allIdleTime：所有类型的超时时间。
                         new IdleStateHandler(60, 0, 0),
                         //处理握手和认证
                         new UserAuthHandler(),
@@ -61,17 +65,15 @@ public class NettyChatServer extends BaseServer {
             });
 
         try {
-            cf = b.bind().sync();
-            InetSocketAddress addr = (InetSocketAddress) cf.channel().localAddress();
+            super.channelFuture = super.serverBootstrap.bind().sync();
+            InetSocketAddress addr = (InetSocketAddress) super.channelFuture.channel().localAddress();
             log.info("WebSocketServer start success, port is:{}", addr.getPort());
 
             // 定时扫描所有的Channel，关闭失效的Channel
             executorService.scheduleAtFixedRate(new Runnable() {
-
-
                 @Override
                 public void run() {
-                    log.info("定时任务 扫描不活跃的Channel  --------");
+                    log.info("定时任务 扫描不活跃的Channel");
                     UserInfoManager.scanNotActiveChannel();
                 }
             }, 3, 60, TimeUnit.SECONDS);
@@ -80,7 +82,7 @@ public class NettyChatServer extends BaseServer {
             executorService.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-                    log.info("定时任务 广播在线人数  --------");
+                    log.info("定时任务 广播在线人数");
                     UserInfoManager.broadCastPing();
                 }
             }, 3, 50, TimeUnit.SECONDS);

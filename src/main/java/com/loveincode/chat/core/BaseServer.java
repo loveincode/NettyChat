@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class BaseServer implements Server {
 
-    protected String host = "localhost";
     protected int port = 9090;
 
     protected DefaultEventLoopGroup defLoopGroup;
@@ -23,12 +22,11 @@ public abstract class BaseServer implements Server {
      */
     protected NioEventLoopGroup bossGroup;
     protected NioEventLoopGroup workGroup;
-    protected NioServerSocketChannel ssch;
-    protected ChannelFuture cf;
+    protected ChannelFuture channelFuture;
     /**
      * 服务端做配置和启动的类。
      */
-    protected ServerBootstrap b;
+    protected ServerBootstrap serverBootstrap;
 
     public void init() {
         defLoopGroup = new DefaultEventLoopGroup(8, new ThreadFactory() {
@@ -56,7 +54,7 @@ public abstract class BaseServer implements Server {
             }
         });
 
-        b = new ServerBootstrap();
+        serverBootstrap = new ServerBootstrap();
     }
 
     @Override
